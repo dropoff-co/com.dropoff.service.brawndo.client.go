@@ -1,19 +1,27 @@
 
+<img src="Dropoff-Logo-Cropped.png" alt="Drawing" style="width: 200px;"/>
 
 # Brawndo Go Client
 
 This is the 3rd party dropoff go client for creating and viewing orders and adding tips.
+
+* **For Javascript documentation go [HERE](https://github.com/dropoff-co/com.dropoff.service.brawndo.client.js "Javascript")**
+* **For PHP documentation go [HERE](https://github.com/dropoff-co/com.dropoff.service.brawndo.client.php "PHP")**
+* **For Ruby documentation go [HERE](https://github.com/dropoff-co/com.dropoff.service.brawndo.client.ruby "Ruby")**
+* **For C# documentation go [HERE](https://github.com/dropoff-co/com.dropoff.service.brawndo.client.dotnetcore "C#")**
 
 # Table of Contents
   + [Client Info](#client)
     - [Configuration](#intialization)
     - [Getting Your Account Info](#client_info)
     - [Enterprise Managed Accounts](#managed_clients)
+    - [Order Properties](#order_properties)
     - [Getting Pricing Estimates](#estimates)
     - [Placing an Order](#placing)
     - [Cancelling an Order](#cancel)
     - [Getting a Specific Order](#specific)
     - [Getting a Page of Order](#page)
+  + [Signature Image URL](#signature)
   + [Tips](#tips)  
     - [Creating](#tip_create)
     - [Deleting](#tip_delete)
@@ -141,6 +149,43 @@ All you have to do is specify the id of the client that you want to act on.  So 
 
 The following api documentation will show how to do this.
 
+### Order Properties <a id="order_properties"></a>
+
+Depending on your client, you may have the option to add properties to your order.  In order to determine whether or not your client has properties, you can make a call the **AvailableProperties** function.  It will return all properties that can be applied to your orders during creation.
+
+   	var req brawndo.AvailablePropertiesRequest
+	req.CompanyId = ""
+	res, err := b.AvailableProperties(&req)
+
+	
+If you include a **CompanyId** you will retrieve that company's properties only if your account credentials are managing that account.
+
+This is the structure of a successful response:
+
+	type AvailablePropertiesData struct {
+		Id					int64
+		Label				string
+		Description		string
+		PriceAdjustment	float64
+		Conflicts			[]int64
+		Requires			[]int64
+	}
+	
+	type AvailablePropertiesResponse struct {
+		Total			int64
+		Count			int64
+		LastKey		string
+		Data      	[]*AvailablePropertiesData		Success   	bool
+		Timestamp 	string
+	}
+
+- **Id** - the id of the property, you will use this value if you want to add the property to an order you are creating
+- **Label** - a simple description of the property.
+- **Description** - more details about the property.
+- **PriceAdjustment** - a number that describes any additional charges that the property will require.
+- **Conflicts** - an array of other property ids that cannot be included in an order when this property is set.  In the above response you cannot set both "Leave at Door" and "Signature Required".
+- **Requires** - an array of other property ids that must be included in an order when this property is set.  In the above response, when "Legal Filing" is set on an order, then "Signature Required" should be set as well.
+
 
 ### Getting Pricing Estimates <a id="estimates"></a>
 
@@ -209,6 +254,7 @@ In order to create a new order you would instantiate a CreateOrderRequest struct
 		Details     *CreateOrderDetails
 		Origin      *CreateOrderAddress
 		Destination *CreateOrderAddress
+		Properties  []int64
 		CompanyId   string
 	}
 
@@ -216,6 +262,7 @@ In order to create a new order you would instantiate a CreateOrderRequest struct
 * **Details** - contains data specific to the order
 * **Origin** -  contains data specific to the origin (pickup location) of the order
 * **Destination** - contains data specific to the destination (dropoff location) of the order
+* **Properties** - an array of property ids.
 * **CompanyId** - if you are using brawndo as an enterprise client that manages other dropoff clients you can specify the managed client id who you would like to create an order for. This is optional and only works for enterprise clients.
 ---
 
@@ -403,6 +450,7 @@ The struct for GetOrderData looks like this:
 		Details     *GetOrderDetails
 		Origin      *GetOrderAddress
 		Destination *GetOrderAddress
+		Properties  []*GetOrderProperty
 	}
 
 ---
@@ -496,7 +544,24 @@ The struct for GetOrderAddress looks like this:
 * **CreateDate** -  the unix timestamp of creation.
 * **UpdateDate** -  the unix timestamp of the last update.
 * **Remarks** -  additional instructions for the address.
+
 ---
+
+The struct for GetOrderProperty looks like this:
+
+	type GetOrderProperty struct {
+		Id					int64
+		Label				string
+		Description		string
+		PriceAdjustment	float64
+	}
+
+
+---
+- **Id** - the id of the property
+- **Label** - a simple description of the property.
+- **Description** - more details about the property.
+- **PriceAdjustment** - a number that describes any additional charges that the property will incur.
 
 
 
@@ -539,6 +604,26 @@ This will return a GetOrdersResponse struct when successful
 
 Use **LastKey** to get the subsequent page of orders.
 
+## Signature Image URL<a id="signature"></a>
+
+Some orders will contain signatures.  If you want to get a url to an image of the signature you can call the **GetSignatureRequest** function.  Note that the signature may not always exist, for example when the delivery was left at the door of the destination.
+
+	var req brawndo.GetSignatureRequest
+	req.CompanyId = "" // optional
+	req.OrderId = "gV1z-NVVE-O8w"
+
+	res, err := b.GetSignature(&req)
+
+
+The response is structured like this:
+
+	type GetSignatureResponse struct {
+		Url				string
+		Success			bool
+	}
+
+**The signature url is configured with an expiration time of 5 minutes after the request for the resource was made**
+	
 ## Tips <a id="tips"></a>
 
 You can create, delete, and read tips for individual orders.  Please note that tips can only be created or deleted for orders that were delivered within the current billing period.  Tips are paid out to our agents and will appear as an order adjustment charge on your invoice after the current billing period has expired.  Tip amounts must not be zero or negative.  You are limited to one tip per order.

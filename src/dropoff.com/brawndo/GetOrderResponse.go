@@ -38,10 +38,18 @@ type GetOrderAddress struct {
 	UpdateDate      int64   `json:"updatedate"`
 }
 
+type GetOrderProperty struct {
+	Id					int64		`json:"id"`
+	Label				string		`json:"label"`
+	Description			string		`json:"description"`
+	PriceAdjustment		float64		`json:"price_adjustment"`
+}
+
 type GetOrderData struct {
 	Details     *GetOrderDetails	`json:"details"`
 	Origin      *GetOrderAddress	`json:"origin"`
 	Destination *GetOrderAddress	`json:"destination"`
+	Properties  []*GetOrderProperty	`json:"properties,omitempty"`
 }
 
 type GetOrderResponse struct {

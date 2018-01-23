@@ -1,7 +1,7 @@
 package brawndo
 
 import (
-	"fmt"
+	//"fmt"
 	"encoding/json"
 	"net/url"
 	"strconv"
@@ -24,7 +24,79 @@ func (b Client) Info() (InfoResponse, error) {
 
 	err = json.Unmarshal([]byte(resp), &ir)
 
-	return ir, nil;
+	return ir, nil
+}
+
+type AvailablePropertiesRequest struct {
+	CompanyId   string
+}
+
+func (b Client) AvailableProperties(req *AvailablePropertiesRequest) (AvailablePropertiesResponse, error) {
+	var apgr AvailablePropertiesResponse
+	var query_string string
+
+	var company_id = req.CompanyId
+
+	req.CompanyId = ""
+
+	if (company_id != "") {
+		query, err := url.ParseQuery("")
+		if (err != nil) {
+			return apgr, err
+		}
+		query.Add("company_id", company_id)
+		query_string = "?" + query.Encode()
+	}
+
+	resp, err := b.Transport.MakeRequest("GET", "/order/properties", "order", query_string, nil)
+
+
+	if (err != nil) {
+		return apgr, err
+	}
+
+	err = json.Unmarshal([]byte(resp), &apgr)
+
+	return apgr, nil
+}
+
+type GetSignatureRequest struct {
+	CompanyId   string
+	OrderId   	string
+}
+
+type GetSignatureResponse struct {
+	Url				string 	`json:"url"`
+	Success			bool	`json:"success"`
+}
+
+func (b Client) GetSignature(req *GetSignatureRequest) (GetSignatureResponse, error) {
+	var gsr GetSignatureResponse
+	var query_string string
+
+	var company_id = req.CompanyId
+
+	req.CompanyId = ""
+
+	if (company_id != "") {
+		query, err := url.ParseQuery("")
+		if (err != nil) {
+			return gsr, err
+		}
+		query.Add("company_id", company_id)
+		query_string = "?" + query.Encode()
+	}
+
+	resp, err := b.Transport.MakeRequest("GET", "/order/signature/" + req.OrderId, "order", query_string, nil)
+
+
+	if (err != nil) {
+		return gsr, err
+	}
+
+	err = json.Unmarshal([]byte(resp), &gsr)
+
+	return gsr, nil
 }
 
 type EstimateRequest struct {
@@ -82,8 +154,6 @@ func (b Client) Estimate(req *EstimateRequest) (EstimateResponse, error) {
 	if (err != nil) {
 		return er, err
 	}
-
-	fmt.Println(resp);
 
 	err = json.Unmarshal([]byte(resp), &er)
 
