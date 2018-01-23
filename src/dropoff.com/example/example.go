@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"time"
 	"dropoff.com/brawndo"
-//	"github.com/davecgh/go-spew/spew"
 	"github.com/davecgh/go-spew/spew"
 )
 
@@ -243,29 +242,54 @@ func testInfo(b *brawndo.Client) {
 	if (err != nil) {
 		fmt.Println(err)
 	} else {
-		//fmt.Printf("%+v", res)
-		//fmt.Printf("%+v", res.User)
 		spew.Dump(res)
-		//resMarshalled, _ := json.Marshal(res)
-		//fmt.Println(string(resMarshalled))
+	}
+}
+
+func testAvailableProperties(b *brawndo.Client) {
+	var req brawndo.AvailablePropertiesRequest
+	req.CompanyId = ""
+
+	res, err := b.AvailableProperties(&req)
+
+	if (err != nil) {
+		fmt.Println(err)
+	} else {
+		spew.Dump(res)
+	}
+}
+
+func testGetSignature(b *brawndo.Client) {
+	var req brawndo.GetSignatureRequest
+	req.CompanyId = ""
+	req.OrderId = "gV1z-NVVE-O8w"
+
+	res, err := b.GetSignature(&req)
+
+	if (err != nil) {
+		fmt.Println(err)
+	} else {
+		spew.Dump(res)
 	}
 }
 
 func main() {
 	var t brawndo.Transport
 
-	var managed_company = "111111111111111"
-	var order_id = "22222222222222"
+	//var managed_company = "111111111111111"
+	//var order_id = "22222222222222"
 
 	t.Host = "localhost:9094"
 	t.ApiURL = "http://localhost:9094/v1"
-	t.PublicKey = "111111111111dasdfasdfasdfasdfasdfasdadfasdfasdfasdfasdfasdfasdfa"
-	t.SecretKey = "222222222222erqwerqwerqwerqwerqwerqwerqwerqewrqewrqwerqwerqwerqw"
+	t.PublicKey = "user::91e9b320b0b5d71098d2f6a8919d0b3d5415db4b80d4b553f46580a60119afc8"
+	t.SecretKey = "7f8fee62743d7bb5bf2e79a0438516a18f4a4a4df4d0cfffda26a3b906817482"
 
 	var b brawndo.Client
 	b.Transport = &t
 
 	testInfo(&b)
+	testAvailableProperties(&b)
+	testGetSignature(&b)
 
 	//testEstimate(&b)
 	//testEstimateForManagedClient(&b, managed_company)
