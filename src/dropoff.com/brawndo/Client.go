@@ -60,6 +60,39 @@ func (b Client) AvailableProperties(req *AvailablePropertiesRequest) (AvailableP
 	return apgr, nil
 }
 
+type AvailableItemsRequest struct {
+	CompanyId string
+}
+
+func (b Client) AvailableItems(req *AvailableItemsRequest) (AvailableItemsResponse, error) {
+	var availableItemsResponse AvailableItemsResponse
+	var queryString string
+
+	var companyId = req.CompanyId
+
+	req.CompanyId = ""
+
+	if companyId != "" {
+		query, err := url.ParseQuery("")
+		if err != nil {
+			return availableItemsResponse, err
+		}
+		query.Add("company_id", companyId)
+		queryString = "?" + query.Encode()
+	}
+
+	resp, err := b.Transport.MakeRequest("GET", "/order/items", "order", queryString, nil)
+
+	if err != nil {
+		return availableItemsResponse, err
+	}
+
+	err = json.Unmarshal([]byte(resp), &availableItemsResponse)
+
+	return availableItemsResponse, nil
+}
+
+
 type GetSignatureRequest struct {
 	CompanyId   string
 	OrderId   	string

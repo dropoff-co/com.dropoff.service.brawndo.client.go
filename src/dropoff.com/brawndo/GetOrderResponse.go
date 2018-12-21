@@ -45,11 +45,31 @@ type GetOrderProperty struct {
 	PriceAdjustment		float64		`json:"price_adjustment"`
 }
 
+type GetOrderItem struct {
+	Container int64 `json:"container"`
+	Quantity int64 `json:"quantity"`
+	Weight int64 `json:"Weight"`
+	Description string `json:"description"`
+	Createdate int64 `json:"createdate"`
+	PersonName string `json:"person_name"`
+	OrderItemId string `json:"order_item_id"`
+	Unit string `json:"unit"`
+	Depth int64 `json:"depth"`
+	Updatedate int64 `json:"updatedate"`
+	Price float64 `json:"price"`
+	Temperature int64 `json:"temperature"`
+	Width int64 `json:"width"`
+	Sku string `json:"sku"`
+	OrderId string `json:"order_id"`
+	Height int64 `json:"height"`
+}
+
 type GetOrderData struct {
 	Details     *GetOrderDetails	`json:"details"`
 	Origin      *GetOrderAddress	`json:"origin"`
 	Destination *GetOrderAddress	`json:"destination"`
 	Properties  []*GetOrderProperty	`json:"properties,omitempty"`
+	Items 		[]*GetOrderItem		`json:"items,omitempty"`
 }
 
 type GetOrderResponse struct {
