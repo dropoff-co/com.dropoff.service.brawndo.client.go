@@ -188,7 +188,7 @@ This is the structure of a successful response:
 - **Requires** - an array of other property ids that must be included in an order when this property is set.  In the above response, when "Legal Filing" is set on an order, then "Signature Required" should be set as well.
 
 ### Getting Available Order Items <a id="order_items"></a>
-An order can be created with order line items such as quantity, or temperature. To use a line item, the line item must be enabled for your account. To see which order line items are available for your account, use the **Available Items** function. 
+An order can be created with order line items such as quantity, or temperature. To use a line item, the line item must be enabled for your account. To see which order line items are available for your account, use the **Available Items** function. Order line item constants are in Client.go.
 
 	//companyId is optional
 	var availableItemsRequest brawndo.AvailableItemsRequest
@@ -380,16 +380,16 @@ The order items section is an array of [items](#order_items) to add to the order
 
 	var cor_item1 brawndo.CreateOrderItem
     
-	cor_item1.Container="TRAY"
+	cor_item1.Container=brawndo.CONTAINER_TRAY
 	cor_item1.Description="Please handle gently"
 	cor_item1.Width="5"
 	cor_item1.Height="5"
 	cor_item1.Depth="5"
-	cor_item1.PersonName="John Item"
+	cor_item1.PersonName="John Locke"
 	cor_item1.Price="15.99"
 	cor_item1.Quantity=2
 	cor_item1.Sku="123456123456"
-	cor_item1.Temperature="AMBIENT"
+	cor_item1.Temperature=brawndo.TEMP_AMBIENT
 	cor_item1.Weight="10"
 	cor_item1.Unit="in"
 	

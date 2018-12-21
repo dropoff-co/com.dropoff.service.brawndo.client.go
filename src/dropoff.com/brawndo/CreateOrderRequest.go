@@ -29,7 +29,7 @@ type CreateOrderDetails struct {
 }
 
 type CreateOrderItem struct {
-	Container string `json:"container"`
+	Container int64 `json:"container"`
 	Description string `json:"description"`
 	Width string `json:"width"`
 	Height string`json:"height"`
@@ -38,7 +38,7 @@ type CreateOrderItem struct {
 	Price string `json:"price"`
 	Quantity int `json:"quantity"`
 	Sku string `json:"sku"`
-	Temperature string `json:"temperature"`
+	Temperature int64 `json:"temperature"`
 	Weight string `json:"weight"`
 	Unit string `json:"unit"`
 }

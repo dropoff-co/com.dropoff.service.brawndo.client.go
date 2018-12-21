@@ -48,7 +48,7 @@ type GetOrderProperty struct {
 type GetOrderItem struct {
 	Container int64 `json:"container"`
 	Quantity int64 `json:"quantity"`
-	Weight int64 `json:"Weight"`
+	Weight int64 `json:"weight"`
 	Description string `json:"description"`
 	Createdate int64 `json:"createdate"`
 	PersonName string `json:"person_name"`

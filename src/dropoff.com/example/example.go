@@ -19,7 +19,7 @@ func testAvailableItems(b *brawndo.Client) {
 		spew.Dump(availableItemsResponse)
 	}
 
-	
+
 }
 func testCreateNewOrder(b *brawndo.Client) string {
 	return testCreateNewOrderForManagedClient(b, "")
@@ -31,29 +31,29 @@ func testCreateNewOrderForManagedClient(b *brawndo.Client, company_id string) st
 	var cor_o, cor_d brawndo.CreateOrderAddress
 	var cor_item1, cor_item2 brawndo.CreateOrderItem
 
-	cor_item1.Container="TRAY"
+	cor_item1.Container=brawndo.CONTAINER_BOX
 	cor_item1.Description="Please handle gently"
 	cor_item1.Width="5"
 	cor_item1.Height="5"
 	cor_item1.Depth="5"
-	cor_item1.PersonName="John Item"
+	cor_item1.PersonName="John Locke"
 	cor_item1.Price="15.99"
 	cor_item1.Quantity=2
 	cor_item1.Sku="123456123456"
-	cor_item1.Temperature="AMBIENT"
+	cor_item1.Temperature=brawndo.TEMP_AMBIENT
 	cor_item1.Weight="10"
 	cor_item1.Unit="in"
 
-	cor_item2.Container="BOX"
+	cor_item2.Container=brawndo.CONTAINER_BAG
 	cor_item2.Description="This one must really be handled carefully"
 	cor_item2.Width="5"
 	cor_item2.Height="5"
 	cor_item2.Depth="5"
-	cor_item2.PersonName="John Item"
+	cor_item2.PersonName="John Locke"
 	cor_item2.Price="15.99"
 	cor_item2.Quantity=2
 	cor_item2.Sku="123456123456"
-	cor_item2.Temperature="FROZEN"
+	cor_item2.Temperature=brawndo.TEMP_FROZEN
 	cor_item2.Weight="10"
 	cor_item2.Unit="ft"
 
@@ -331,7 +331,7 @@ func main() {
 	var b brawndo.Client
 	b.Transport = &t
 
-	//testCreateNewOrder(&b)
+	testCreateNewOrder(&b)
 
 	testAvailableItems(&b)
 	//testInfo(&b)

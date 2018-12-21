@@ -10,6 +10,29 @@ import (
 	//"crypto/hmac"
 )
 
+//Line item constants
+const LINE_ITEM_DISABLED = 0
+const LINE_ITEM_OPTIONAL = 1
+const LINE_ITEM_REQUIRED = 2
+
+const TEMP_NA = 0
+const TEMP_AMBIENT = 100
+const TEMP_REFRIGERATED = 200
+const TEMP_FROZEN = 300
+
+const CONTAINER_NA = 0
+const CONTAINER_BAG = 100
+const CONTAINER_BOX = 200
+const CONTAINER_TRAY = 300
+const CONTAINER_PALLET = 400
+const CONTAINER_BARREL = 500
+const CONTAINER_BASKET = 600
+const CONTAINER_BUCKET = 700
+const CONTAINER_CARTON = 800
+const CONTAINER_CASE = 900
+const CONTAINER_COOLER = 1000
+const CONTAINER_CRATE = 1100
+
 type Client struct {
 	Transport *Transport
 }
