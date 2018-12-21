@@ -11,7 +11,6 @@ func testAvailableItems(b *brawndo.Client) {
 
 	var availableItemsRequest brawndo.AvailableItemsRequest
 	availableItemsRequest.CompanyId = "7df2b0bdb418157609c0d5766fb7fb12"
-
 	availableItemsResponse, err := b.AvailableItems(&availableItemsRequest)
 
 	if (err != nil) {
@@ -19,6 +18,8 @@ func testAvailableItems(b *brawndo.Client) {
 	} else {
 		spew.Dump(availableItemsResponse)
 	}
+
+	
 }
 func testCreateNewOrder(b *brawndo.Client) string {
 	return testCreateNewOrderForManagedClient(b, "")
@@ -332,7 +333,7 @@ func main() {
 
 	//testCreateNewOrder(&b)
 
-	//testAvailableItems(&b)
+	testAvailableItems(&b)
 	//testInfo(&b)
 	//testAvailableProperties(&b)
 	//testGetSignature(&b)
@@ -340,7 +341,7 @@ func main() {
 	//testEstimate(&b)
 	//testEstimateForManagedClient(&b, managed_company)
 	//
-	testGetOrder(&b, "96c3dd62601ab20c53f8bcb3d19a52fa")
+	//testGetOrder(&b, "96c3dd62601ab20c53f8bcb3d19a52fa")
 	//testGetOrderForManagedClient(&b, order_id, managed_company)
 	//
 	//testGetOrderPage(&b)

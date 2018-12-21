@@ -16,6 +16,7 @@ This is the 3rd party dropoff go client for creating and viewing orders and addi
     - [Getting Your Account Info](#client_info)
     - [Enterprise Managed Accounts](#managed_clients)
     - [Order Properties](#order_properties)
+    - [Order Items](#order_items)
     - [Getting Pricing Estimates](#estimates)
     - [Placing an Order](#placing)
     - [Cancelling an Order](#cancel)
@@ -186,6 +187,43 @@ This is the structure of a successful response:
 - **Conflicts** - an array of other property ids that cannot be included in an order when this property is set.  In the above response you cannot set both "Leave at Door" and "Signature Required".
 - **Requires** - an array of other property ids that must be included in an order when this property is set.  In the above response, when "Legal Filing" is set on an order, then "Signature Required" should be set as well.
 
+### Getting Available Order Items <a id="order_items"></a>
+An order can be created with order line items such as quantity, or temperature. To use a line item, the line item must be enabled for your account. To see which order line items are available for your account, use the **Available Items** function. 
+
+	//companyId is optional
+	var availableItemsRequest brawndo.AvailableItemsRequest
+	availableItemsRequest.CompanyId = "7df2b0bdb418157609c0d5766fb7fb12"
+	availableItemsResponse, err := b.AvailableItems(&availableItemsRequest)
+	spew.Dump(availableItemsResponse)
+
+An example of a successful response will look like this:
+
+	(brawndo.AvailableItemsResponse) {
+	 Data: (*brawndo.AvailableItemsResponseData)(0xc0000fe280)({
+	  OrderItemEnabled: (int) 2,
+	  CompanyId: (string) (len=32) "7df2b0bdb418157609c0d5766fb7fb12",
+	  OrderItemAllowSku: (int) 2,
+	  OrderItemTemperatureUnit: (string) (len=1) "F",
+	  OrderItemPersonNameLabel: (string) (len=9) "Recipient",
+	  OrderItemAllowWeight: (int) 2,
+	  OrderItemAllowPersonName: (int) 2,
+	  OrderItemAllowQuantity: (int) 2,
+	  OrderItemAllowDescription: (int) 2,
+	  OderItemAllowDimensions: (int) 2,
+	  OrderItemAllowContainer: (int) 2,
+	  OrderItemAllowTemperature: (int) 1,
+	  OrderItemAllowPrice: (int) 2
+	 }),
+	 Success: (bool) true,
+	 Timestamp: (string) (len=20) "2018-12-21T17:28:40Z"
+	}
+
+
+* **0** - the order item type is disabled
+* **1** - the order item type is optional
+* **2** - the order item type is enabled
+
+
 
 ### Getting Pricing Estimates <a id="estimates"></a>
 
@@ -207,6 +245,7 @@ Before you place an order you will first want to estimate the distance, eta, and
 * **UTCOffset** - the utc offset of the timezone where the order is taking place.  Value is in seconds. Required.
 * **ReadyTimestamp** - the unix timestamp (in seconds) representing when the order is ready to be picked up.  If not set we assume immediate availability for pickup.
 * **CompanyId** - if you are using brawndo as an enterprise client that manages other dropoff clients you can specify the managed client id who's estimate you want here. This is optional and only works for enterprise clients.
+
 ---
 
 	res, err := b.Estimate(origin, destination, o, ready)
@@ -255,6 +294,7 @@ In order to create a new order you would instantiate a CreateOrderRequest struct
 		Origin      *CreateOrderAddress
 		Destination *CreateOrderAddress
 		Properties  []int64
+		Items		[]CreateOrderItem
 		CompanyId   string
 	}
 
@@ -263,7 +303,9 @@ In order to create a new order you would instantiate a CreateOrderRequest struct
 * **Origin** -  contains data specific to the origin (pickup location) of the order
 * **Destination** - contains data specific to the destination (dropoff location) of the order
 * **Properties** - an array of property ids.
+* **Items** - an array of order line items.
 * **CompanyId** - if you are using brawndo as an enterprise client that manages other dropoff clients you can specify the managed client id who you would like to create an order for. This is optional and only works for enterprise clients.
+
 ---
 
 #### Origin and Destination data.
@@ -300,6 +342,7 @@ The Origin and Destination contain information regarding the addresses in the or
 * **Remarks** -  additional instructions for the origin or destination.  Optional.
 * **Lat** -  the latitude for the origin or destination.  Required.
 * **Lng** -  the longitude for the origin or destination.  Required.
+ 
 ---
 
 #### Order details data.
@@ -328,7 +371,30 @@ The Details contain information about the order
 * **Type** - the order window.  Can be asap, two_hr, four_hr depending on the ready_date. Required.
 * **ReferenceName** - a field for your internal referencing. Optional.
 * **ReferenceCode** - a field for your internal referencing. Optional.
+ 
 ---
+
+#### Order Items data.
+
+The order items section is an array of [items](#order_items) to add to the order. This is an optional piece of data.
+
+	var cor_item1 brawndo.CreateOrderItem
+    
+	cor_item1.Container="TRAY"
+	cor_item1.Description="Please handle gently"
+	cor_item1.Width="5"
+	cor_item1.Height="5"
+	cor_item1.Depth="5"
+	cor_item1.PersonName="John Item"
+	cor_item1.Price="15.99"
+	cor_item1.Quantity=2
+	cor_item1.Sku="123456123456"
+	cor_item1.Temperature="AMBIENT"
+	cor_item1.Weight="10"
+	cor_item1.Unit="in"
+	
+	items := []brawndo.CreateOrderItem {cor_item1}
+    
 Once this data is created, you can create the order.
 
 	var cor brawndo.CreateOrderRequest
@@ -376,6 +442,7 @@ Once this data is created, you can create the order.
 	cor.Details = &cor_det
 	cor.Destination = &cor_d
 	cor.Origin = &cor_o
+	cor.Items = items
 
 	res,err := b.CreateOrder(&cor)
 	
@@ -406,6 +473,7 @@ The data in the return value will contain the id of the new order as well as the
 ---
 * **OrderId** - the id of the order to cancel.
 * **CompanyId** - if you are using brawndo as an enterprise client that manages other dropoff clients you can specify the managed client id who you would like to cancel an order for. This is optional and only works for enterprise clients.
+
 ---
 
 An order can be cancelled in these situations
@@ -428,6 +496,7 @@ An order can be cancelled in these situations
 ---
 * **OrderId** - the id of the order to view.
 * **CompanyId** - if you are using brawndo as an enterprise client that manages other dropoff clients you can specify the managed client id who you would like to get an order for. This is optional and only works for enterprise clients.
+
 ---
 
 This will return a GetOrderResponse struct
@@ -442,6 +511,7 @@ This will return a GetOrderResponse struct
 * **Data** - contains specifics about the order
 * **Success** - true if the order was retrieved, false otherwise.
 * **Timestamp** - the time that the opration completed
+
 ---
 
 The struct for GetOrderData looks like this:
@@ -451,12 +521,15 @@ The struct for GetOrderData looks like this:
 		Origin      *GetOrderAddress
 		Destination *GetOrderAddress
 		Properties  []*GetOrderProperty
+		Items 		[]*GetOrderItem
 	}
 
 ---
 * **Details** - contains data specific to the order
 * **Origin** -  contains data specific to the origin (pickup location) of the order
 * **Destination** - contains data specific to the destination (dropoff location) of the order
+* **Items** - an array of the order's line items
+
 ---
 
 
@@ -507,6 +580,7 @@ The struct for GetOrderDetails looks like this:
 * **OrderStatusName** -  a string description of the status.
 * **ReferenceName** - a field for your internal referencing.
 * **ReferenceCode** - a field for your internal referencing.
+
 ---
 
 The struct for GetOrderAddress looks like this:
@@ -563,7 +637,28 @@ The struct for GetOrderProperty looks like this:
 - **Description** - more details about the property.
 - **PriceAdjustment** - a number that describes any additional charges that the property will incur.
 
+---
 
+The struct for GetOrderItem looks like this:
+
+	type GetOrderItem struct {
+		Container int64
+		Quantity int64
+		Weight int64
+		Description string
+		Createdate int64
+		PersonName string
+		OrderItemId string
+		Unit string
+		Depth int64
+		Updatedate int64
+		Price float64
+		Temperature int64
+		Width int64
+		Sku string
+		OrderId string
+		Height int64
+	}
 
 ### Getting a page of orders <a id="page"></a>
 
@@ -589,6 +684,7 @@ The struct for GetOrderProperty looks like this:
 ---
 * **LastKey** - the key that marks the next page of orders. optional.
 * **CompanyId** -  if you are using brawndo as an enterprise client that manages other dropoff clients you can specify the managed client id who you would like to get a page of orders for. This is optional and only works for enterprise clients.
+
 ---
 
 This will return a GetOrdersResponse struct when successful
@@ -643,6 +739,7 @@ Tip creation requires specifying an order id and an amount.
 * **OrderId** - the order id you want to add the tip to.
 * **Amount** - the amount of the tip.
 * **CompanyId** -  if you are using brawndo as an enterprise client that manages other dropoff clients you can specify the managed client id who who has an order you want to add a tip to. This is optional and only works for enterprise clients.
+
 ---
 
 Response Struct:
@@ -683,6 +780,7 @@ Response Struct:
 ---
 * **OrderId** - the order id you want to delete the tip from.
 * **CompanyId** -  if you are using brawndo as an enterprise client that manages other dropoff clients you can specify the managed client id who who has an order you want to remove a tip from. This is optional and only works for enterprise clients.
+
 ---
 
 ### Reading a tip <a id="tip_read"></a>
@@ -698,6 +796,7 @@ Tip reading requires specifying an order id.
 ---
 * **OrderId** - the order id who's tip you want to see.
 * **CompanyId** -  if you are using brawndo as an enterprise client that manages other dropoff clients you can specify the managed client id who who has an order who's tip you want to see. This is optional and only works for enterprise clients.
+
 ---
 
 Response Struct:
@@ -851,4 +950,5 @@ The struct response is:
 * **OrderDetailsUrl** - the url of the order details page.
 * **Timestamp** - the timestamp that the simulation request was completed.
 * **Success** - true if the simulation was started.
+
 ---
