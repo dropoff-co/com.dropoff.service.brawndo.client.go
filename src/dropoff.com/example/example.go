@@ -7,6 +7,20 @@ import (
 	"github.com/davecgh/go-spew/spew"
 )
 
+func testAvailableItems(b *brawndo.Client) {
+
+	var availableItemsRequest brawndo.AvailableItemsRequest
+	availableItemsRequest.CompanyId = "7df2b0bdb418157609c0d5766fb7fb12"
+	availableItemsResponse, err := b.AvailableItems(&availableItemsRequest)
+
+	if (err != nil) {
+		fmt.Println(err)
+	} else {
+		spew.Dump(availableItemsResponse)
+	}
+
+
+}
 func testCreateNewOrder(b *brawndo.Client) string {
 	return testCreateNewOrderForManagedClient(b, "")
 }
@@ -15,6 +29,33 @@ func testCreateNewOrderForManagedClient(b *brawndo.Client, company_id string) st
 	var cor brawndo.CreateOrderRequest
 	var cor_det brawndo.CreateOrderDetails
 	var cor_o, cor_d brawndo.CreateOrderAddress
+	var cor_item1, cor_item2 brawndo.CreateOrderItem
+
+	cor_item1.Container=brawndo.CONTAINER_BOX
+	cor_item1.Description="Please handle gently"
+	cor_item1.Width="5"
+	cor_item1.Height="5"
+	cor_item1.Depth="5"
+	cor_item1.PersonName="John Locke"
+	cor_item1.Price="15.99"
+	cor_item1.Quantity=2
+	cor_item1.Sku="123456123456"
+	cor_item1.Temperature=brawndo.TEMP_AMBIENT
+	cor_item1.Weight="10"
+	cor_item1.Unit="in"
+
+	cor_item2.Container=brawndo.CONTAINER_BAG
+	cor_item2.Description="This one must really be handled carefully"
+	cor_item2.Width="5"
+	cor_item2.Height="5"
+	cor_item2.Depth="5"
+	cor_item2.PersonName="John Locke"
+	cor_item2.Price="15.99"
+	cor_item2.Quantity=2
+	cor_item2.Sku="123456123456"
+	cor_item2.Temperature=brawndo.TEMP_FROZEN
+	cor_item2.Weight="10"
+	cor_item2.Unit="ft"
 
 	cor_det.Quantity = 1
 	cor_det.Weight = 5
@@ -57,6 +98,9 @@ func testCreateNewOrderForManagedClient(b *brawndo.Client, company_id string) st
 	cor.Details = &cor_det
 	cor.Destination = &cor_d
 	cor.Origin = &cor_o
+
+	items := []brawndo.CreateOrderItem {cor_item1, cor_item2}
+	cor.Items = items
 
 	if (company_id != "") {
 		cor.CompanyId = company_id
@@ -171,15 +215,15 @@ func testCancelOrderForManagedClient(b *brawndo.Client, order_id string, company
 	}
 }
 
-func testSimulateOrder(b *brawndo.Client, market string) {
-	res, err := b.SimulateOrder(market)
+// func testSimulateOrder(b *brawndo.Client, market string) {
+// 	res, err := b.SimulateOrder(market)
 
-	if (err != nil) {
-		fmt.Println(err)
-	} else {
-		fmt.Println(res)
-	}
-}
+// 	if (err != nil) {
+// 		fmt.Println(err)
+// 	} else {
+// 		fmt.Println(res)
+// 	}
+// }
 
 func testCreateTip(b *brawndo.Client, order_id string, amount string) {
 	testCreateTipForManagedClient(b, order_id, amount, "")
@@ -281,20 +325,23 @@ func main() {
 
 	t.Host = "localhost:9094"
 	t.ApiURL = "http://localhost:9094/v1"
-	t.PublicKey = "user::91e9b320b0b5d71098d2f6a8919d0b3d5415db4b80d4b553f46580a60119afc8"
-	t.SecretKey = "7f8fee62743d7bb5bf2e79a0438516a18f4a4a4df4d0cfffda26a3b906817482"
+	t.PublicKey = "771f764454130af2c086e243e316feffe06d7f0aace18ad4ab16e47608efb625"
+	t.SecretKey = "78ca06d0601c23751a642eed60acf69c65206ab825bbd10f81dde5fb370fac28"
 
 	var b brawndo.Client
 	b.Transport = &t
 
-	testInfo(&b)
-	testAvailableProperties(&b)
-	testGetSignature(&b)
+	testCreateNewOrder(&b)
+
+	testAvailableItems(&b)
+	//testInfo(&b)
+	//testAvailableProperties(&b)
+	//testGetSignature(&b)
 
 	//testEstimate(&b)
 	//testEstimateForManagedClient(&b, managed_company)
 	//
-	//testGetOrder(&b, order_id)
+	//testGetOrder(&b, "96c3dd62601ab20c53f8bcb3d19a52fa")
 	//testGetOrderForManagedClient(&b, order_id, managed_company)
 	//
 	//testGetOrderPage(&b)
