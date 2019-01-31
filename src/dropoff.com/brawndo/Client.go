@@ -32,6 +32,7 @@ const CONTAINER_CARTON = 800
 const CONTAINER_CASE = 900
 const CONTAINER_COOLER = 1000
 const CONTAINER_CRATE = 1100
+const CONTAINER_TOTE = 1200
 
 type Client struct {
 	Transport *Transport
