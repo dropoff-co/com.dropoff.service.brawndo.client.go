@@ -28,10 +28,26 @@ type CreateOrderDetails struct {
 	ReferenceName	string `json:"reference_name,omitempty"`
 }
 
+type CreateOrderItem struct {
+	Container int64 `json:"container"`
+	Description string `json:"description"`
+	Width string `json:"width"`
+	Height string`json:"height"`
+	Depth string `json:"depth"`
+	PersonName string `json:"person_name"`
+	Price string `json:"price"`
+	Quantity int `json:"quantity"`
+	Sku string `json:"sku"`
+	Temperature int64 `json:"temperature"`
+	Weight string `json:"weight"`
+	Unit string `json:"unit"`
+}
+
 type CreateOrderRequest struct {
 	Details     *CreateOrderDetails `json:"details"`
 	Origin      *CreateOrderAddress `json:"origin"`
 	Destination *CreateOrderAddress `json:"destination"`
 	Properties  []int64				`json:"properties,omitempty"`
+	Items		[]CreateOrderItem `json:"items",omitempty"`
 	CompanyId   string 				`json:"company_id,omitempty"`
 }
