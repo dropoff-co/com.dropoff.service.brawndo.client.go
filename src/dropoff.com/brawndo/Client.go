@@ -3,6 +3,7 @@ package brawndo
 import (
 	//"fmt"
 	"encoding/json"
+	"fmt"
 	"net/url"
 	"strconv"
 	//"net/http"
@@ -52,7 +53,7 @@ func (b Client) Info() (InfoResponse, error) {
 }
 
 type AvailablePropertiesRequest struct {
-	CompanyId   string
+	CompanyId string
 }
 
 func (b Client) AvailableProperties(req *AvailablePropertiesRequest) (AvailablePropertiesResponse, error) {
@@ -74,7 +75,6 @@ func (b Client) AvailableProperties(req *AvailablePropertiesRequest) (AvailableP
 
 	resp, err := b.Transport.MakeRequest("GET", "/order/properties", "order", queryString, nil)
 
-
 	if err != nil {
 		return apgr, err
 	}
@@ -82,6 +82,47 @@ func (b Client) AvailableProperties(req *AvailablePropertiesRequest) (AvailableP
 	err = json.Unmarshal([]byte(resp), &apgr)
 
 	return apgr, nil
+}
+
+type DriverActionsMetaRequest struct {
+	CompanyId string
+}
+
+func (b Client) DriverActionsMeta(req *DriverActionsMetaRequest) (DriverActionsMetaResponse, error) {
+	var damr DriverActionsMetaResponse
+	var queryString string
+
+	var companyId = req.CompanyId
+
+	req.CompanyId = ""
+
+	if companyId != "" {
+		query, err := url.ParseQuery("")
+		if err != nil {
+			return damr, err
+		}
+		query.Add("company_id", companyId)
+		query.Add("go", "true")
+		queryString = "?" + query.Encode()
+	} else {
+		query, err := url.ParseQuery("")
+		if err != nil {
+			return damr, err
+		}
+		query.Add("go", "true")
+		queryString = "?" + query.Encode()
+	}
+
+	resp, err := b.Transport.MakeRequest("GET", "/order/driver_actions_meta", "order", queryString, nil)
+
+	fmt.Println("Response: ", resp)
+	if err != nil {
+		return damr, err
+	}
+
+	err = json.Unmarshal([]byte(resp), &damr)
+
+	return damr, nil
 }
 
 type AvailableItemsRequest struct {
@@ -116,15 +157,14 @@ func (b Client) AvailableItems(req *AvailableItemsRequest) (AvailableItemsRespon
 	return availableItemsResponse, nil
 }
 
-
 type GetSignatureRequest struct {
-	CompanyId   string
-	OrderId   	string
+	CompanyId string
+	OrderId   string
 }
 
 type GetSignatureResponse struct {
-	Url				string 	`json:"url"`
-	Success			bool	`json:"success"`
+	Url     string `json:"url"`
+	Success bool   `json:"success"`
 }
 
 func (b Client) GetSignature(req *GetSignatureRequest) (GetSignatureResponse, error) {
@@ -144,8 +184,45 @@ func (b Client) GetSignature(req *GetSignatureRequest) (GetSignatureResponse, er
 		queryString = "?" + query.Encode()
 	}
 
-	resp, err := b.Transport.MakeRequest("GET", "/order/signature/" + req.OrderId, "order", queryString, nil)
+	resp, err := b.Transport.MakeRequest("GET", "/order/signature/"+req.OrderId, "order", queryString, nil)
 
+	if err != nil {
+		return gsr, err
+	}
+
+	err = json.Unmarshal([]byte(resp), &gsr)
+
+	return gsr, nil
+}
+
+type GetPickupSignatureRequest struct {
+	CompanyId string
+	OrderId   string
+}
+
+type GetPickupSignatureResponse struct {
+	Url     string `json:"url"`
+	Success bool   `json:"success"`
+}
+
+func (b Client) GetPickupSignature(req *GetPickupSignatureRequest) (GetPickupSignatureResponse, error) {
+	var gsr GetPickupSignatureResponse
+	var queryString string
+
+	var companyId = req.CompanyId
+
+	req.CompanyId = ""
+
+	if companyId != "" {
+		query, err := url.ParseQuery("")
+		if err != nil {
+			return gsr, err
+		}
+		query.Add("company_id", companyId)
+		queryString = "?" + query.Encode()
+	}
+
+	resp, err := b.Transport.MakeRequest("GET", "/order/pickup_signature/"+req.OrderId, "order", queryString, nil)
 
 	if err != nil {
 		return gsr, err
@@ -157,11 +234,11 @@ func (b Client) GetSignature(req *GetSignatureRequest) (GetSignatureResponse, er
 }
 
 type EstimateRequest struct {
-	Origin		string
-	Destination	string
-	UTCOffset	int
-	ReadyTimestamp  int64
-	CompanyId	string
+	Origin         string
+	Destination    string
+	UTCOffset      int
+	ReadyTimestamp int64
+	CompanyId      string
 }
 
 func (b Client) Estimate(req *EstimateRequest) (EstimateResponse, error) {
@@ -206,7 +283,7 @@ func (b Client) Estimate(req *EstimateRequest) (EstimateResponse, error) {
 		query.Add("ready_timestamp", strconv.FormatInt(readyTimestamp, 10))
 	}
 
-	resp, err := b.Transport.MakeRequest("GET", "/estimate", "estimate", "?" + query.Encode(), nil)
+	resp, err := b.Transport.MakeRequest("GET", "/estimate", "estimate", "?"+query.Encode(), nil)
 
 	if err != nil {
 		return er, err
@@ -255,9 +332,9 @@ func (b Client) CreateOrder(req *CreateOrderRequest) (CreateOrderResponse, error
 }
 
 type OrderRequest struct {
-	OrderId		string
-	LastKey		string
-	CompanyId	string
+	OrderId   string
+	LastKey   string
+	CompanyId string
 }
 
 func (b Client) GetOrder(req *OrderRequest) (GetOrderResponse, error) {
@@ -277,7 +354,7 @@ func (b Client) GetOrder(req *OrderRequest) (GetOrderResponse, error) {
 		queryString = "?" + query.Encode()
 	}
 
-	resp, err := b.Transport.MakeRequest("GET", "/order/" + orderId, "order", queryString, nil)
+	resp, err := b.Transport.MakeRequest("GET", "/order/"+orderId, "order", queryString, nil)
 
 	if err != nil {
 		return gor, err
@@ -347,7 +424,7 @@ func (b Client) CancelOrder(req *OrderRequest) (CancelOrderResponse, error) {
 		queryString = "?" + query.Encode()
 	}
 
-	resp, err := b.Transport.MakeRequest("POST", "/order/" +orderId+ "/cancel", "order", queryString, nil)
+	resp, err := b.Transport.MakeRequest("POST", "/order/"+orderId+"/cancel", "order", queryString, nil)
 
 	if err != nil {
 		return cor, err
@@ -363,9 +440,9 @@ func (b Client) CancelOrder(req *OrderRequest) (CancelOrderResponse, error) {
 }
 
 type SimulateRequest struct {
-	OrderId		string
-	Market		string
-	CompanyId   string
+	OrderId   string
+	Market    string
+	CompanyId string
 }
 
 func (b Client) SimulateOrder(req *SimulateRequest) (SimulateOrderResponse, error) {
@@ -382,7 +459,7 @@ func (b Client) SimulateOrder(req *SimulateRequest) (SimulateOrderResponse, erro
 	}
 
 	if req.OrderId != "" {
-		resp, err := b.Transport.MakeRequest("GET", "/order/simulate/order/" + req.OrderId, "order", queryString, nil)
+		resp, err := b.Transport.MakeRequest("GET", "/order/simulate/order/"+req.OrderId, "order", queryString, nil)
 
 		if err != nil {
 			return sor, err
@@ -394,7 +471,7 @@ func (b Client) SimulateOrder(req *SimulateRequest) (SimulateOrderResponse, erro
 			return sor, err
 		}
 	} else if req.Market != "" {
-		resp, err := b.Transport.MakeRequest("GET", "/order/simulate/" + req.Market, "order", queryString, nil)
+		resp, err := b.Transport.MakeRequest("GET", "/order/simulate/"+req.Market, "order", queryString, nil)
 
 		if err != nil {
 			return sor, err
@@ -410,11 +487,10 @@ func (b Client) SimulateOrder(req *SimulateRequest) (SimulateOrderResponse, erro
 	return sor, nil
 }
 
-
 type OrderTipRequest struct {
-	OrderId		string
-	Amount		string
-	CompanyId	string
+	OrderId   string
+	Amount    string
+	CompanyId string
 }
 
 func (b Client) CreateOrderTip(req *OrderTipRequest) (TipResponse, error) {
@@ -435,7 +511,7 @@ func (b Client) CreateOrderTip(req *OrderTipRequest) (TipResponse, error) {
 		queryString = "?" + query.Encode()
 	}
 
-	resp, err := b.Transport.MakeRequest("POST", "/order/" +orderId+ "/tip/" + amount, "order", queryString, nil)
+	resp, err := b.Transport.MakeRequest("POST", "/order/"+orderId+"/tip/"+amount, "order", queryString, nil)
 
 	if err != nil {
 		return tr, err
@@ -466,7 +542,7 @@ func (b Client) GetOrderTip(req *OrderTipRequest) (GetTipResponse, error) {
 		queryString = "?" + query.Encode()
 	}
 
-	resp, err := b.Transport.MakeRequest("GET", "/order/" +orderId+ "/tip", "order", queryString, nil)
+	resp, err := b.Transport.MakeRequest("GET", "/order/"+orderId+"/tip", "order", queryString, nil)
 
 	if err != nil {
 		return tr, err
@@ -497,7 +573,7 @@ func (b Client) DeleteOrderTip(req *OrderTipRequest) (DeleteTipResponse, error) 
 		queryString = "?" + query.Encode()
 	}
 
-	resp, err := b.Transport.MakeRequest("DELETE", "/order/" +orderId+ "/tip", "order", queryString, nil)
+	resp, err := b.Transport.MakeRequest("DELETE", "/order/"+orderId+"/tip", "order", queryString, nil)
 
 	if err != nil {
 		return tr, err
