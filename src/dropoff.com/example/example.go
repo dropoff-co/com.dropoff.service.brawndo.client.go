@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"time"
+
 	"dropoff.com/brawndo"
 	"github.com/davecgh/go-spew/spew"
 )
@@ -13,12 +14,11 @@ func testAvailableItems(b *brawndo.Client) {
 	availableItemsRequest.CompanyId = "7df2b0bdb418157609c0d5766fb7fb12"
 	availableItemsResponse, err := b.AvailableItems(&availableItemsRequest)
 
-	if (err != nil) {
+	if err != nil {
 		fmt.Println(err)
 	} else {
 		spew.Dump(availableItemsResponse)
 	}
-
 
 }
 func testCreateNewOrder(b *brawndo.Client) string {
@@ -31,31 +31,31 @@ func testCreateNewOrderForManagedClient(b *brawndo.Client, company_id string) st
 	var cor_o, cor_d brawndo.CreateOrderAddress
 	var cor_item1, cor_item2 brawndo.CreateOrderItem
 
-	cor_item1.Container=brawndo.CONTAINER_BOX
-	cor_item1.Description="Please handle gently"
-	cor_item1.Width="5"
-	cor_item1.Height="5"
-	cor_item1.Depth="5"
-	cor_item1.PersonName="John Locke"
-	cor_item1.Price="15.99"
-	cor_item1.Quantity=2
-	cor_item1.Sku="123456123456"
-	cor_item1.Temperature=brawndo.TEMP_AMBIENT
-	cor_item1.Weight="10"
-	cor_item1.Unit="in"
+	cor_item1.Container = brawndo.CONTAINER_BOX
+	cor_item1.Description = "Please handle gently"
+	cor_item1.Width = "5"
+	cor_item1.Height = "5"
+	cor_item1.Depth = "5"
+	cor_item1.PersonName = "John Locke"
+	cor_item1.Price = "15.99"
+	cor_item1.Quantity = 2
+	cor_item1.Sku = "123456123456"
+	cor_item1.Temperature = brawndo.TEMP_AMBIENT
+	cor_item1.Weight = "10"
+	cor_item1.Unit = "in"
 
-	cor_item2.Container=brawndo.CONTAINER_BAG
-	cor_item2.Description="This one must really be handled carefully"
-	cor_item2.Width="5"
-	cor_item2.Height="5"
-	cor_item2.Depth="5"
-	cor_item2.PersonName="John Locke"
-	cor_item2.Price="15.99"
-	cor_item2.Quantity=2
-	cor_item2.Sku="123456123456"
-	cor_item2.Temperature=brawndo.TEMP_FROZEN
-	cor_item2.Weight="10"
-	cor_item2.Unit="ft"
+	cor_item2.Container = brawndo.CONTAINER_BAG
+	cor_item2.Description = "This one must really be handled carefully"
+	cor_item2.Width = "5"
+	cor_item2.Height = "5"
+	cor_item2.Depth = "5"
+	cor_item2.PersonName = "John Locke"
+	cor_item2.Price = "15.99"
+	cor_item2.Quantity = 2
+	cor_item2.Sku = "123456123456"
+	cor_item2.Temperature = brawndo.TEMP_FROZEN
+	cor_item2.Weight = "10"
+	cor_item2.Unit = "ft"
 
 	cor_det.Quantity = 1
 	cor_det.Weight = 5
@@ -99,16 +99,16 @@ func testCreateNewOrderForManagedClient(b *brawndo.Client, company_id string) st
 	cor.Destination = &cor_d
 	cor.Origin = &cor_o
 
-	items := []brawndo.CreateOrderItem {cor_item1, cor_item2}
+	items := []brawndo.CreateOrderItem{cor_item1, cor_item2}
 	cor.Items = items
 
-	if (company_id != "") {
+	if company_id != "" {
 		cor.CompanyId = company_id
 	}
 
-	res,err := b.CreateOrder(&cor)
+	res, err := b.CreateOrder(&cor)
 
-	if (err != nil) {
+	if err != nil {
 		fmt.Println(err)
 		return ""
 	} else {
@@ -134,7 +134,7 @@ func testEstimateForManagedClient(b *brawndo.Client, company_id string) {
 
 	est_res, est_err := b.Estimate(&req)
 
-	if (est_err != nil) {
+	if est_err != nil {
 		fmt.Println(est_err)
 	} else {
 		spew.Dump(est_res)
@@ -153,7 +153,7 @@ func testGetOrderForManagedClient(b *brawndo.Client, order_id string, company_id
 
 	res, err := b.GetOrder(&req)
 
-	if (err != nil) {
+	if err != nil {
 		fmt.Println(err)
 	} else {
 		spew.Dump(res)
@@ -172,7 +172,7 @@ func testGetOrderPageWithLastKeyForManagedClient(b *brawndo.Client, last_key str
 
 	res, err := b.GetOrderPage(&req)
 
-	if (err != nil) {
+	if err != nil {
 		fmt.Println(err)
 	} else {
 		fmt.Println(res)
@@ -189,7 +189,7 @@ func testGetOrderPageForManagedClient(b *brawndo.Client, company_id string) {
 
 	res, err := b.GetOrderPage(&req)
 
-	if (err != nil) {
+	if err != nil {
 		fmt.Println(err)
 	} else {
 		spew.Dump(res)
@@ -208,7 +208,7 @@ func testCancelOrderForManagedClient(b *brawndo.Client, order_id string, company
 
 	res, err := b.CancelOrder(&req)
 
-	if (err != nil) {
+	if err != nil {
 		fmt.Println(err)
 	} else {
 		fmt.Println(res)
@@ -237,7 +237,7 @@ func testCreateTipForManagedClient(b *brawndo.Client, order_id string, amount st
 
 	res, err := b.CreateOrderTip(&req)
 
-	if (err != nil) {
+	if err != nil {
 		fmt.Println(err)
 	} else {
 		spew.Dump(res)
@@ -249,14 +249,14 @@ func testGetTip(b *brawndo.Client, order_id string) {
 }
 
 func testGetTipForManagedClient(b *brawndo.Client, order_id string, company_id string) {
-	var req brawndo.OrderTipRequest;
-	req.OrderId = order_id;
-	req.CompanyId = company_id;
+	var req brawndo.OrderTipRequest
+	req.OrderId = order_id
+	req.CompanyId = company_id
 
-	res, err := b.GetOrderTip(&req);
+	res, err := b.GetOrderTip(&req)
 
-	if (err != nil) {
-		fmt.Println(err);
+	if err != nil {
+		fmt.Println(err)
 	} else {
 		spew.Dump(res)
 	}
@@ -273,7 +273,7 @@ func testDeleteTipForManagedClient(b *brawndo.Client, order_id string, company_i
 
 	res, err := b.DeleteOrderTip(&req)
 
-	if (err != nil) {
+	if err != nil {
 		fmt.Println(err)
 	} else {
 		spew.Dump(res)
@@ -283,7 +283,7 @@ func testDeleteTipForManagedClient(b *brawndo.Client, order_id string, company_i
 func testInfo(b *brawndo.Client) {
 	res, err := b.Info()
 
-	if (err != nil) {
+	if err != nil {
 		fmt.Println(err)
 	} else {
 		spew.Dump(res)
@@ -296,7 +296,7 @@ func testAvailableProperties(b *brawndo.Client) {
 
 	res, err := b.AvailableProperties(&req)
 
-	if (err != nil) {
+	if err != nil {
 		fmt.Println(err)
 	} else {
 		spew.Dump(res)
@@ -306,11 +306,38 @@ func testAvailableProperties(b *brawndo.Client) {
 func testGetSignature(b *brawndo.Client) {
 	var req brawndo.GetSignatureRequest
 	req.CompanyId = ""
-	req.OrderId = "gV1z-NVVE-O8w"
+	req.OrderId = "mvB0-1jeQ-N20"
 
 	res, err := b.GetSignature(&req)
 
-	if (err != nil) {
+	if err != nil {
+		fmt.Println(err)
+	} else {
+		spew.Dump(res)
+	}
+}
+
+func testGetPickupSignature(b *brawndo.Client) {
+	var req brawndo.GetPickupSignatureRequest
+	req.CompanyId = ""
+	req.OrderId = "mvB0-1jeQ-N20"
+
+	res, err := b.GetPickupSignature(&req)
+
+	if err != nil {
+		fmt.Println(err)
+	} else {
+		spew.Dump(res)
+	}
+}
+
+func testDriverActionsMeta(b *brawndo.Client) {
+	var req brawndo.DriverActionsMetaRequest
+	// req.CompanyId = "7df2b0bdb418157609c0d5766fb7fb12"
+
+	res, err := b.DriverActionsMeta(&req)
+
+	if err != nil {
 		fmt.Println(err)
 	} else {
 		spew.Dump(res)
@@ -325,15 +352,17 @@ func main() {
 
 	t.Host = "localhost:9094"
 	t.ApiURL = "http://localhost:9094/v1"
-	t.PublicKey = "771f764454130af2c086e243e316feffe06d7f0aace18ad4ab16e47608efb625"
-	t.SecretKey = "78ca06d0601c23751a642eed60acf69c65206ab825bbd10f81dde5fb370fac28"
+	t.PublicKey = "4ee8515f32be9537f3e66613323d9493ccbf61a7634c3863f05aa2298f6f3fe2"
+	t.SecretKey = "6c6c4a8e0e9c4b28e3f5e9e41185286ca2283fb5b3bcb44e3354b5d55330f495"
 
 	var b brawndo.Client
 	b.Transport = &t
 
-	testCreateNewOrder(&b)
+	testInfo(&b)
+	testDriverActionsMeta(&b)
+	// testCreateNewOrder(&b)
 
-	testAvailableItems(&b)
+	// testAvailableItems(&b)
 	//testInfo(&b)
 	//testAvailableProperties(&b)
 	//testGetSignature(&b)
@@ -350,7 +379,7 @@ func main() {
 	//testGetOrderPage(&b)
 	//testCreateNewOrderForManagedClient(&b, "2f1427456048edc72e2798e94deb7231")
 	//testGetOrderPageForClient(&b, "2f1427456048edc72e2798e94deb7231")
-	//testGetOrder(&b)
+	// testGetOrder(&b, "mvB0-1jeQ-N20")
 	//testGetOrderPage(&b)
 	//testGetOrderPageWithLastKey(&b)
 	//new_order_id := testCreateNewOrder(&b)
