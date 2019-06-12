@@ -11,7 +11,7 @@ import (
 func testAvailableItems(b *brawndo.Client) {
 
 	var availableItemsRequest brawndo.AvailableItemsRequest
-	availableItemsRequest.CompanyId = "7df2b0bdb418157609c0d5766fb7fb12"
+	availableItemsRequest.CompanyId = ""
 	availableItemsResponse, err := b.AvailableItems(&availableItemsRequest)
 
 	if err != nil {
@@ -69,7 +69,7 @@ func testCreateNewOrderForManagedClient(b *brawndo.Client, company_id string) st
 
 	cor_o.CompanyName = "Dropoff GO Origin"
 	cor_o.Email = "noreply+origin@dropoff.com"
-	cor_o.Phone = "5124744877"
+	cor_o.Phone = "5125555555"
 	cor_o.FirstName = "Napoleon"
 	cor_o.LastName = "Bonner"
 	cor_o.AddressLine1 = "117 San Jacinto Blvd"
@@ -83,16 +83,16 @@ func testCreateNewOrderForManagedClient(b *brawndo.Client, company_id string) st
 
 	cor_d.CompanyName = "Dropoff GO Destination"
 	cor_d.Email = "noreply+destination@dropoff.com"
-	cor_d.Phone = "5555554444"
+	cor_d.Phone = "5125555555"
 	cor_d.FirstName = "Del"
 	cor_d.LastName = "Fitzgitibit"
-	cor_d.AddressLine1 = "800 Brazos Street"
-	cor_d.AddressLine2 = "250"
+	cor_d.AddressLine1 = "1601 S MoPac Expy"
+	cor_d.AddressLine2 = "C301"
 	cor_d.City = "Austin"
 	cor_d.State = "TX"
-	cor_d.Zip = "78701"
-	cor_d.Lat = 30.269967
-	cor_d.Lng = -97.740838
+	cor_d.Zip = "78746"
+	cor_d.Lat = 30.260228
+	cor_d.Lng = -97.793359
 	//cor_d.Remarks = "Be nice to napoleon";
 
 	cor.Details = &cor_det
@@ -126,8 +126,8 @@ func testEstimateForManagedClient(b *brawndo.Client, company_id string) {
 
 	_, now := time.Now().Zone()
 
-	req.Origin = "2517 Thornton Rd, Austin, TX 78704"
-	req.Destination = "800 Brazos St, Austin, TX 78704"
+	req.Origin = "117 San Jacinto Blvd, Austin, TX 78701"
+	req.Destination = "1601 S MoPac Expy, Austin, TX 78746"
 	req.UTCOffset = now
 	req.ReadyTimestamp = -1
 	req.CompanyId = company_id
@@ -306,7 +306,7 @@ func testAvailableProperties(b *brawndo.Client) {
 func testGetSignature(b *brawndo.Client) {
 	var req brawndo.GetSignatureRequest
 	req.CompanyId = ""
-	req.OrderId = "mvB0-1jeQ-N20"
+	req.OrderId = ""
 
 	res, err := b.GetSignature(&req)
 
@@ -320,7 +320,7 @@ func testGetSignature(b *brawndo.Client) {
 func testGetPickupSignature(b *brawndo.Client) {
 	var req brawndo.GetPickupSignatureRequest
 	req.CompanyId = ""
-	req.OrderId = "mvB0-1jeQ-N20"
+	req.OrderId = ""
 
 	res, err := b.GetPickupSignature(&req)
 
@@ -333,7 +333,7 @@ func testGetPickupSignature(b *brawndo.Client) {
 
 func testDriverActionsMeta(b *brawndo.Client) {
 	var req brawndo.DriverActionsMetaRequest
-	// req.CompanyId = "7df2b0bdb418157609c0d5766fb7fb12"
+	// req.CompanyId = ""
 
 	res, err := b.DriverActionsMeta(&req)
 
@@ -350,10 +350,10 @@ func main() {
 	//var managed_company = "111111111111111"
 	//var order_id = "22222222222222"
 
-	t.Host = "localhost:9094"
-	t.ApiURL = "http://localhost:9094/v1"
-	t.PublicKey = "4ee8515f32be9537f3e66613323d9493ccbf61a7634c3863f05aa2298f6f3fe2"
-	t.SecretKey = "6c6c4a8e0e9c4b28e3f5e9e41185286ca2283fb5b3bcb44e3354b5d55330f495"
+	t.Host = "sandbox-brawndo.dropoff.com"
+	t.ApiURL = "https://sandbox-brawndo.dropoff.com/v1"
+	t.PublicKey = ""
+	t.SecretKey = ""
 
 	var b brawndo.Client
 	b.Transport = &t
@@ -365,21 +365,22 @@ func main() {
 	// testAvailableItems(&b)
 	//testInfo(&b)
 	//testAvailableProperties(&b)
-	//testGetSignature(&b)
+	testGetSignature(&b)
+	testGetPickupSignature(&b)
 
 	//testEstimate(&b)
 	//testEstimateForManagedClient(&b, managed_company)
 	//
-	//testGetOrder(&b, "96c3dd62601ab20c53f8bcb3d19a52fa")
+	//testGetOrder(&b, "")
 	//testGetOrderForManagedClient(&b, order_id, managed_company)
 	//
 	//testGetOrderPage(&b)
 	//testGetOrderPageForManagedClient(&b, managed_company)
 	//
 	//testGetOrderPage(&b)
-	//testCreateNewOrderForManagedClient(&b, "2f1427456048edc72e2798e94deb7231")
-	//testGetOrderPageForClient(&b, "2f1427456048edc72e2798e94deb7231")
-	// testGetOrder(&b, "mvB0-1jeQ-N20")
+	//testCreateNewOrderForManagedClient(&b, "")
+	//testGetOrderPageForClient(&b, "")
+	// testGetOrder(&b, "")
 	//testGetOrderPage(&b)
 	//testGetOrderPageWithLastKey(&b)
 	//new_order_id := testCreateNewOrder(&b)
