@@ -1,19 +1,21 @@
 package brawndo
 
 type CreateOrderAddress struct {
-	CompanyName  string  `json:"company_name"`
-	Email        string  `json:"email"`
-	Phone        string  `json:"phone"`
-	FirstName    string  `json:"first_name"`
-	LastName     string  `json:"last_name"`
-	AddressLine1 string  `json:"address_line_1"`
-	AddressLine2 string  `json:"address_line_2,omitempty"`
-	City         string  `json:"city"`
-	State        string  `json:"state"`
-	Zip          string  `json:"zip"`
-	Remarks      string  `json:"remarks,omitempty"`
-	Lat          float64 `json:"lat"`
-	Lng          float64 `json:"lng"`
+	CompanyName  				string  `json:"company_name"`
+	Email        				string  `json:"email"`
+	Phone        				string  `json:"phone"`
+	FirstName    				string  `json:"first_name"`
+	LastName     				string  `json:"last_name"`
+	AddressLine1 				string  `json:"address_line_1"`
+	AddressLine2 				string  `json:"address_line_2,omitempty"`
+	City         				string  `json:"city"`
+	State        				string  `json:"state"`
+	Zip          				string  `json:"zip"`
+	Remarks      				string  `json:"remarks,omitempty"`
+	Lat          				float64 `json:"lat"`
+	Lng          				float64 `json:"lng"`
+	EmailNotifications 	*bool 	`json:"email_notifications"`
+	SmsNotifications 		*bool 	`json:"sms_notifications"`
 }
 
 type CreateOrderDetails struct {
