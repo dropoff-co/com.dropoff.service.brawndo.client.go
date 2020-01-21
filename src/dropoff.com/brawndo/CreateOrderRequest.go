@@ -14,8 +14,8 @@ type CreateOrderAddress struct {
 	Remarks      				string  `json:"remarks,omitempty"`
 	Lat          				float64 `json:"lat"`
 	Lng          				float64 `json:"lng"`
-	EmailNotifications 	*bool 	`json:"email_notifications"`
-	SmsNotifications 		*bool 	`json:"sms_notifications"`
+	EmailNotifications 			*bool 	`json:"email_notifications,omitempty"`
+	SmsNotifications 			*bool 	`json:"sms_notifications,omitempty"`
 }
 
 type CreateOrderDetails struct {
@@ -31,18 +31,18 @@ type CreateOrderDetails struct {
 }
 
 type CreateOrderItem struct {
-	Container   int64  `json:"container"`
-	Description string `json:"description"`
-	Width       string `json:"width"`
-	Height      string `json:"height"`
-	Depth       string `json:"depth"`
-	PersonName  string `json:"person_name"`
-	Price       string `json:"price"`
-	Quantity    int    `json:"quantity"`
-	Sku         string `json:"sku"`
-	Temperature int64  `json:"temperature"`
-	Weight      string `json:"weight"`
-	Unit        string `json:"unit"`
+	Container   int64  `json:"container,omitempty"`
+	Description string `json:"description,omitempty"`
+	Width       string `json:"width,omitempty"`
+	Height      string `json:"height,omitempty"`
+	Depth       string `json:"depth,omitempty"`
+	PersonName  string `json:"person_name,omitempty"`
+	Price       string `json:"price,omitempty"`
+	Quantity    int    `json:"quantity,omitempty"`
+	Sku         string `json:"sku,omitempty"`
+	Temperature int64  `json:"temperature,omitempty"`
+	Weight      string `json:"weight,omitempty"`
+	Unit        string `json:"unit,omitempty"`
 }
 
 type CreateOrderRequest struct {
