@@ -4,7 +4,7 @@ type CreateOrderData struct {
 	OrderId 		string 	`json:"order_id"`
 	ShortId			string 	`json:"short_id"`
 	URL	 			string 	`json:"url"`
-	LabelURL		string	`json:"label_url"`
+	LabelURL		string	`json:"label_url,omitempty"`
 }
 
 type CreateOrderResponse struct {
