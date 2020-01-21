@@ -76,8 +76,6 @@ type GetOrderWorkflow struct {
 }
 
 type GetOrderData struct {
-	Url			string				`json:"url"`
-	LabelUrl	string				`json:"label_url"`
 	Details     *GetOrderDetails    `json:"details"`
 	Origin      *GetOrderAddress    `json:"origin"`
 	Destination *GetOrderAddress    `json:"destination"`
