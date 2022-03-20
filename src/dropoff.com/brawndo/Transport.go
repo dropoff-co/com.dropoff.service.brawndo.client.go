@@ -5,9 +5,12 @@ import (
 	"crypto/hmac"
 	"crypto/sha512"
 	"encoding/hex"
-	//"fmt"
+	"fmt"
+	"io"
 	"io/ioutil"
+	"mime/multipart"
 	"net/http"
+	"os"
 	"sort"
 	"strings"
 	"time"
@@ -15,7 +18,7 @@ import (
 
 type Transport struct {
 	ApiURL, Host, PublicKey, SecretKey string
-	Client *http.Client
+	Client                             *http.Client
 }
 
 func (t Transport) ComputeHmac512(message string, secret string) string {
@@ -25,7 +28,7 @@ func (t Transport) ComputeHmac512(message string, secret string) string {
 	return hex.EncodeToString(h.Sum(nil))
 }
 
-func (t Transport) SignRequest( method,path,resource string, request *http.Request ) {
+func (t Transport) SignRequest(method, path, resource string, request *http.Request) {
 	var xDropoffDate = time.Now().Format("20060102T150405Z")
 	var keys []string
 
@@ -39,10 +42,10 @@ func (t Transport) SignRequest( method,path,resource string, request *http.Reque
 	}
 
 	sort.Strings(keys)
-
+	fmt.Println(keys)
 	var headerString, headerKeyString, authBody, bodyHash, finalStringToHash, firstKey, finalHash, authHash string
 
-	for _,v := range keys {
+	for _, v := range keys {
 		if headerString != "" {
 			headerString += "\n"
 			headerKeyString += ";"
@@ -76,16 +79,42 @@ func (t Transport) SignRequest( method,path,resource string, request *http.Reque
 	request.Header.Add("Authorization", authHeader)
 }
 
-
-func (t Transport) MakeRequest( method,path,resource,query string, body []byte ) (string, error) {
+func (t Transport) MakeRequest(method, path, resource, query string, body []byte, filename string) (string, error) {
 	if t.Client == nil {
 		t.Client = &http.Client{}
 	}
 
 	var req *http.Request
 
-	if body != nil {
-		reqq, err := http.NewRequest(method, t.ApiURL + path + query, bytes.NewBuffer(body))
+	if filename != "" {
+		fmt.Println("here")
+		file, err := os.Open(filename)
+
+		if err != nil {
+			fmt.Println(err)
+			return "", err
+		}
+		defer file.Close()
+		body := &bytes.Buffer{}
+		writer := multipart.NewWriter(body)
+		part, err := writer.CreateFormFile("file", filename)
+		if err != nil {
+			fmt.Println(err)
+			return "", err
+		}
+		io.Copy(part, file)
+		writer.Close()
+		reqq, err := http.NewRequest(method, t.ApiURL+path+query, body)
+		if err != nil {
+			fmt.Println(err)
+			return "", err
+		}
+
+		req = reqq
+		req.Header.Set("Content-Type", writer.FormDataContentType())
+	} else if body != nil {
+
+		reqq, err := http.NewRequest(method, t.ApiURL+path+query, bytes.NewBuffer(body))
 
 		if err != nil {
 			return "", err
@@ -94,7 +123,7 @@ func (t Transport) MakeRequest( method,path,resource,query string, body []byte )
 		req = reqq
 		req.Header.Set("Content-Type", "application/json")
 	} else {
-		reqq, err := http.NewRequest(method, t.ApiURL + path + query, nil)
+		reqq, err := http.NewRequest(method, t.ApiURL+path+query, nil)
 
 		if err != nil {
 			return "", err
@@ -103,8 +132,8 @@ func (t Transport) MakeRequest( method,path,resource,query string, body []byte )
 		req = reqq
 	}
 
-	t.SignRequest(method,path,resource,req)
-
+	t.SignRequest(method, path, resource, req)
+	fmt.Println(req)
 	resp, err := t.Client.Do(req)
 
 	if err != nil {

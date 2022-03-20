@@ -41,7 +41,7 @@ type Client struct {
 
 func (b Client) Info() (InfoResponse, error) {
 	var ir InfoResponse
-	resp, err := b.Transport.MakeRequest("GET", "/info", "info", "", nil)
+	resp, err := b.Transport.MakeRequest("GET", "/info", "info", "", nil, "")
 
 	if err != nil {
 		return ir, err
@@ -73,7 +73,7 @@ func (b Client) AvailableProperties(req *AvailablePropertiesRequest) (AvailableP
 		queryString = "?" + query.Encode()
 	}
 
-	resp, err := b.Transport.MakeRequest("GET", "/order/properties", "order", queryString, nil)
+	resp, err := b.Transport.MakeRequest("GET", "/order/properties", "order", queryString, nil, "")
 
 	if err != nil {
 		return apgr, err
@@ -113,7 +113,7 @@ func (b Client) DriverActionsMeta(req *DriverActionsMetaRequest) (DriverActionsM
 		queryString = "?" + query.Encode()
 	}
 
-	resp, err := b.Transport.MakeRequest("GET", "/order/driver_actions_meta", "order", queryString, nil)
+	resp, err := b.Transport.MakeRequest("GET", "/order/driver_actions_meta", "order", queryString, nil, "")
 
 	fmt.Println("Response: ", resp)
 	if err != nil {
@@ -146,7 +146,7 @@ func (b Client) AvailableItems(req *AvailableItemsRequest) (AvailableItemsRespon
 		queryString = "?" + query.Encode()
 	}
 
-	resp, err := b.Transport.MakeRequest("GET", "/order/items", "order", queryString, nil)
+	resp, err := b.Transport.MakeRequest("GET", "/order/items", "order", queryString, nil, "")
 
 	if err != nil {
 		return availableItemsResponse, err
@@ -184,7 +184,7 @@ func (b Client) GetSignature(req *GetSignatureRequest) (GetSignatureResponse, er
 		queryString = "?" + query.Encode()
 	}
 
-	resp, err := b.Transport.MakeRequest("GET", "/order/signature/"+req.OrderId, "order", queryString, nil)
+	resp, err := b.Transport.MakeRequest("GET", "/order/signature/"+req.OrderId, "order", queryString, nil, "")
 
 	if err != nil {
 		return gsr, err
@@ -222,7 +222,7 @@ func (b Client) GetPickupSignature(req *GetPickupSignatureRequest) (GetPickupSig
 		queryString = "?" + query.Encode()
 	}
 
-	resp, err := b.Transport.MakeRequest("GET", "/order/pickup_signature/"+req.OrderId, "order", queryString, nil)
+	resp, err := b.Transport.MakeRequest("GET", "/order/pickup_signature/"+req.OrderId, "order", queryString, nil, "")
 
 	if err != nil {
 		return gsr, err
@@ -283,7 +283,7 @@ func (b Client) Estimate(req *EstimateRequest) (EstimateResponse, error) {
 		query.Add("ready_timestamp", strconv.FormatInt(readyTimestamp, 10))
 	}
 
-	resp, err := b.Transport.MakeRequest("GET", "/estimate", "estimate", "?"+query.Encode(), nil)
+	resp, err := b.Transport.MakeRequest("GET", "/estimate", "estimate", "?"+query.Encode(), nil, "")
 
 	if err != nil {
 		return er, err
@@ -316,7 +316,7 @@ func (b Client) CreateOrder(req *CreateOrderRequest) (CreateOrderResponse, error
 		queryString = "?" + query.Encode()
 	}
 
-	resp, err := b.Transport.MakeRequest("POST", "/order", "order", queryString, ba)
+	resp, err := b.Transport.MakeRequest("POST", "/order", "order", queryString, ba, "")
 
 	if err != nil {
 		return cor, err
@@ -354,7 +354,7 @@ func (b Client) GetOrder(req *OrderRequest) (GetOrderResponse, error) {
 		queryString = "?" + query.Encode()
 	}
 
-	resp, err := b.Transport.MakeRequest("GET", "/order/"+orderId, "order", queryString, nil)
+	resp, err := b.Transport.MakeRequest("GET", "/order/"+orderId, "order", queryString, nil, "")
 
 	if err != nil {
 		return gor, err
@@ -394,7 +394,7 @@ func (b Client) GetOrderPage(req *OrderRequest) (GetOrdersResponse, error) {
 		queryString = "?" + query.Encode()
 	}
 
-	resp, err := b.Transport.MakeRequest("GET", "/order", "order", queryString, nil)
+	resp, err := b.Transport.MakeRequest("GET", "/order", "order", queryString, nil, "")
 
 	if err != nil {
 		return gor, err
@@ -424,7 +424,7 @@ func (b Client) CancelOrder(req *OrderRequest) (CancelOrderResponse, error) {
 		queryString = "?" + query.Encode()
 	}
 
-	resp, err := b.Transport.MakeRequest("POST", "/order/"+orderId+"/cancel", "order", queryString, nil)
+	resp, err := b.Transport.MakeRequest("POST", "/order/"+orderId+"/cancel", "order", queryString, nil, "")
 
 	if err != nil {
 		return cor, err
@@ -459,7 +459,7 @@ func (b Client) SimulateOrder(req *SimulateRequest) (SimulateOrderResponse, erro
 	}
 
 	if req.OrderId != "" {
-		resp, err := b.Transport.MakeRequest("GET", "/order/simulate/order/"+req.OrderId, "order", queryString, nil)
+		resp, err := b.Transport.MakeRequest("GET", "/order/simulate/order/"+req.OrderId, "order", queryString, nil, "")
 
 		if err != nil {
 			return sor, err
@@ -471,7 +471,7 @@ func (b Client) SimulateOrder(req *SimulateRequest) (SimulateOrderResponse, erro
 			return sor, err
 		}
 	} else if req.Market != "" {
-		resp, err := b.Transport.MakeRequest("GET", "/order/simulate/"+req.Market, "order", queryString, nil)
+		resp, err := b.Transport.MakeRequest("GET", "/order/simulate/"+req.Market, "order", queryString, nil, "")
 
 		if err != nil {
 			return sor, err
@@ -511,7 +511,7 @@ func (b Client) CreateOrderTip(req *OrderTipRequest) (TipResponse, error) {
 		queryString = "?" + query.Encode()
 	}
 
-	resp, err := b.Transport.MakeRequest("POST", "/order/"+orderId+"/tip/"+amount, "order", queryString, nil)
+	resp, err := b.Transport.MakeRequest("POST", "/order/"+orderId+"/tip/"+amount, "order", queryString, nil, "")
 
 	if err != nil {
 		return tr, err
@@ -542,7 +542,7 @@ func (b Client) GetOrderTip(req *OrderTipRequest) (GetTipResponse, error) {
 		queryString = "?" + query.Encode()
 	}
 
-	resp, err := b.Transport.MakeRequest("GET", "/order/"+orderId+"/tip", "order", queryString, nil)
+	resp, err := b.Transport.MakeRequest("GET", "/order/"+orderId+"/tip", "order", queryString, nil, "")
 
 	if err != nil {
 		return tr, err
@@ -573,7 +573,7 @@ func (b Client) DeleteOrderTip(req *OrderTipRequest) (DeleteTipResponse, error) 
 		queryString = "?" + query.Encode()
 	}
 
-	resp, err := b.Transport.MakeRequest("DELETE", "/order/"+orderId+"/tip", "order", queryString, nil)
+	resp, err := b.Transport.MakeRequest("DELETE", "/order/"+orderId+"/tip", "order", queryString, nil, "")
 
 	if err != nil {
 		return tr, err
@@ -586,4 +586,35 @@ func (b Client) DeleteOrderTip(req *OrderTipRequest) (DeleteTipResponse, error) 
 	}
 
 	return tr, nil
+}
+
+func (b Client) CreateBulk(req *CreateBulkRequest) (CreateBulkResponse, error) {
+	var cbr CreateBulkResponse
+	var queryString string
+	var companyId = ""
+	var file = "./shortest copy.csv"
+	ba, err := json.Marshal(req)
+	if err != nil {
+		return cbr, err
+	}
+	if companyId != "" {
+		query, err := url.ParseQuery("")
+		if err != nil {
+			return cbr, err
+		}
+		query.Add("company_id", companyId)
+		queryString = "?" + query.Encode()
+	}
+
+	resp, err := b.Transport.MakeRequest("POST", "/bulkupload/nosign", "bulkupload", queryString, ba, file)
+
+	if err != nil {
+		return cbr, err
+	}
+	err = json.Unmarshal([]byte(resp), &cbr)
+
+	if err != nil {
+		return cbr, err
+	}
+	return cbr, nil
 }
